@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>  
+<head><link rel="icon"  href="https://cdn-icons-png.flaticon.com/512/491/491214.png"></head> 
+<!-- Ajout d'une icone-->
+
+
+
+<script src="leaflet.js"> // Bibliothèque Leaflet : http://leafletjs.com/ </script>
+<script src="popup.js"></script>
+<script src="comments.js"></script>
+
+<title>Volcans remarquables</title>
+<link rel="stylesheet" type="text/css" href="leaflet.css" /> 
+<link rel="stylesheet" type="text/css" href="styles.css"/>
+<link rel="stylesheet" type="text/css" href="style_comments.css" /> 
+
+<meta charset="utf-8">
+  
+<!-- Récupération de la liste des volcans au chargement de la page -->
+<body onload="load_data();">
+  <h1>Volcans remarquables</h1>
+  
+  <div id="pwd_request" class="popup">
+  <header id="pwd_request_header" class="handle">Entrer le mot de passe</header>
+  <label><span>Password : </span><input id="enter_pwd" type="password"></label>
+  <footer><button id="confirm_pwd">Ok</button></footer>
+  </div>
+  
+  <div id="message_editor" class="resizable popup">
+    <header id="message_editor_header" class="handle">Édition d'un message</header>
+    <label><span>Pseudo         : </span><input id="input_pseudo"></label>
+    <label><span>Password       : </span><input id="input_password" type="password"></label>
+    <label><span>Date de visite : </span><input id="input_date"></label><br>
+    <label><span>Message        : </span><textarea id="input_message"></textarea></label>
+    <footer>
+      <button id="create_message">&#x2705;</button>
+      <button id="hide_editor" class="hide_popup">&#x274E;</button>
+    </footer>
+  </div>
+
+  <div id="user_editor" class="resizable popup">
+    <header id="user_editor_header" class ="handle"> Création d'un nouvel utilisateur</header>
+    <label><span>Pseudo         : </span><input id="input_user_pseudo"></label>
+    <label><span>Mail           : </span><input id="input_email"></label>
+    <label><span>Password       : </span><input id="input_user_password" type="password"></label>
+    </footer>
+      <button id="create_user">&#x2705;</button>
+      <button id="hide_editor" class="hide_popup">&#x274E;</button>
+    </footer>
+  </div>
+
+
+</div>
+
+  <div class = "container">
+
+  <!-- Zone pour l'insertion de la carte OSM via Leaflet -->
+  <div id="map" style="margin-bottom:1em" style="margin-right: -1em"class = "map"></div>  
+
+  <!-- Zone pour l'affichage dynamique des descriptions -->
+  <div id="description" class = "children"></div>
+  </div>
+  
+<div class = "boutons">
+  <button id="add_comment" class="show_popup" data-popup="message_editor">Laisser un message</button>
+  <button id="show_comments">Afficher les commentaires</button>
+  <button id="add_user"class="show_popup" data-popup="user_editor">Nouvel utilisateur</button>
+</div>
+
+<div id = "messages" class = "commentaires"></div>
+
+
+<script>
+show_comments.addEventListener('click', display_messages);
+create_message.addEventListener('click', post_message);
+create_user.addEventListener('click',post_user);
+
+// variable globale pour le nom du site sélectionné via le marqueur
+var site_name;
+
+// Création d'une carte dans la balise div "map",
+// et position de la vue sur un point donné et un niveau de zoom
+var map = L.map('map').setView([0,0], 1);
+
+// Ajout d'une couche de dalles OpenStreetMap
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+     }).addTo(map);
+
+// Fonction appelée au chargement de la page
+function load_data () {
+
+  // objet pour l'envoi d'une requête Ajax
+  var xhr = new XMLHttpRequest();
+
+  // fonction appelée lorsque la réponse à la requête (liste des volcans) sera arrivée
+  xhr.onload = function() {
+
+    // transformation des données renvoyées par le serveur
+    // responseText est du type string, data est une liste
+    var data = JSON.parse(this.responseText);
+
+    // boucle sur les volcans
+    for ( n = 0; n < data.length; n++ ) {
+      // insertion d'un marqueur à la position du lieu,
+      // attachement d'une popup, capture de l'événement 'clic'
+      // ajout d'une propriété personnalisée au marqueur avec
+      L.marker([data[n].lat,data[n].lon]).addTo(map)
+       .bindPopup(data[n].name)
+       .addEventListener('click',OnMarkerClick)
+       .idnum = data[n].id;
+    }
+  };
+
+
+  // Envoi de la requête Ajax pour la récupération de la liste des volcans 
+
+  xhr.open('GET','/location',true);
+  xhr.send();
+}
+
+// Fonction appelée lors d'un clic sur un marqueur
+function OnMarkerClick (e) {
+
+  // objet pour l'envoi d'une requête Ajax
+  var xhr = new XMLHttpRequest();
+
+  // fonction appelée lorsque la réponse à la requête (description d'un lieu insolite) sera arrivée
+  xhr.onload = function() {
+
+    // transformation des données renvoyées par le serveur
+    // responseText est du type string, data est un objet
+    var data = JSON.parse(this.responseText);
+    var html = '<img src="' + data.photo + '">';
+
+    // affichage dans la zone 'description' du nom (reprise dans le popup)
+    // et de la description récupérée par l'appel au serveur
+	var html2 = '<b><i>'+ html+ e.target.getPopup().getContent() + '</i></b><br><br>';
+	html2 +=  "Altitude: " + data.elevation +'m'+'<br>';
+  html2 += "GPS: "
+	html2 +=  "N" + Math.trunc(data.lat) +'°'+ Math.abs(Math.trunc(100*(data.lat-Math.trunc(data.lat))))+ '&rsquo;' +Math.abs(Math.trunc(10000*data.lat-100*Math.trunc(100*data.lat)))+'"'+' &nbsp;'
+  html2 +="   E" + Math.trunc(data.lon) +'°'+ Math.abs(Math.trunc(100*(data.lon-Math.trunc(data.lon))))+ '&rsquo;' +Math.abs(Math.trunc(10000*data.lon-100*Math.trunc(100*data.lon)))+'"'+'<br>';
+	html2 +=  "Date d'éruption : " + data.eruption_date +'<br>'+"Année d'eruption : " + data.eruption_year+'<br><br>';
+	html2 += 'Lien dbpedia: '+'<a href="' + data.dbpedia +'">'+ (data.dbpedia.split('/'))[4] +' </a>' +'<br><br><t>'+ data.desc+'</t>' ;
+	
+    description.innerHTML =  html2;
+  };
+
+  // Le numéro du lieu est récupéré via la propriété personnalisée du marqueur
+  site_name = e.target.idnum
+
+  // Envoi de la requête Ajax pour la récupération de la description du lieu de numéro idnum
+  xhr.open('GET','/description/'+site_name,true);
+  xhr.send();
+}
+</script>

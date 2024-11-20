@@ -1,0 +1,91 @@
+#comments {
+  visibility:hidden;
+  margin-bottom: 1.33em;
+  color: white;
+}
+article header .delete {
+  right: 0.5rem;
+  position: absolute;
+  background-color: red;
+  color: black;
+  border-radius: 3px;
+  padding: 0px 4px 1px;
+  cursor: pointer;
+}
+.popup {
+  visibility: hidden;
+  position: absolute;
+  background-color: #ccc;
+  z-index: 10000;
+  border: 2px solid black;
+  border-radius: 10px;
+  padding: 20px;
+
+}
+.popup label {
+  color: black;
+}
+#message_editor {
+  width: 50vw;
+  height: 245px;
+  top: 25vh;
+  left: 25vw;
+  color: black;
+}
+#user_editor{
+  width: 50vw;
+  height: 245px;
+  top: 25vh;
+  left: 25vw;
+  color: black;
+  }
+#pwd_request {
+  width: 33vw;
+  height: 100px;
+  top: 33vh;
+  left: 33vw;
+  color: black;
+}
+.popup header {
+  font-size: 120%;
+  background-color: rgba(255,0,0,0.3);
+  margin: -20px -20px 1.33em;
+  padding: 5px 0.5em;
+  color: white;
+}
+.popup label span {
+  position: absolute;
+  display: block;
+  color: white;
+}
+.popup input {
+  margin-bottom: 0.33em;
+  color: white;
+}
+.popup input, .popup textarea {
+  margin-left: 8rem;
+  box-sizing: border-box;
+  background-color: rgba(255,0,0,0.4);
+  border: 1px solid rgba(255,0,0,0.8);
+  border-radius: 5px;
+  width: calc(100% - 8rem);
+  color: white;
+  font-family: Consolas;
+  font-size: 13.3px;
+  padding: 3px 0.5em;
+}
+.popup footer {
+  display: ruby-text;
+  justify-content: space-around;
+  color: white;
+}
+.popup button {
+  background-color: rgba(255,0,0,0.6);
+  color: white;
+  margin: 0em;
+  border: 0px solid rgba(255,0,0,0.4);
+  border-radius: 3px;
+  padding: 0px 0.1em;
+  font-family: Consolas;
+  font-size: 150%;
+}
