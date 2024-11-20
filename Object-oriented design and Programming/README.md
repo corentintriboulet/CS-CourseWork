@@ -1,4 +1,4 @@
-# Object-oriented design and Programming course wprk at Centrale Lyon
+# Object-oriented design and Programming course work at Centrale Lyon
 
 
 ## Objectives
