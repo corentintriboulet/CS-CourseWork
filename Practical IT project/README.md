@@ -1,4 +1,4 @@
-Practical IT project at Centrale Lyon
+# Practical IT project at Centrale Lyon
 
 ## Objectives
 The objective of this lecture is to put into practice the notions and skills introduced by the other lectures of Computer Science, in
