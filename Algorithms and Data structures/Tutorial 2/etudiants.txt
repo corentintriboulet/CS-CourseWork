@@ -1,0 +1,5 @@
+nom;prenom;filiere;moyenne;absences
+Dupond;Pierre;MP;19;0
+Clavier;Christian;PSI;14;1
+Gilles;Eric;PC;16;3
+Arthaud;Nathalie;MP;15;0
